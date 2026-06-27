@@ -3,243 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autorizaciones Digitales - Grupo Scout</title>
+    <title>Autorizaciones Digitales - Gestión Scout Abierta</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        input, button, select, checkbox { touch-action: manipulation; }
-        .spinner { border-top-color: #34d399; animation: spinner 0.6s linear infinite; }
+        input, button, select, checkbox, textarea { touch-action: manipulation; }
+        .spinner { border-top-color: #059669; animation: spinner 0.6s linear infinite; }
         @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="bg-gray-100 font-sans min-h-screen flex flex-col justify-between">
+<body class="bg-slate-50 font-sans min-h-screen flex flex-col justify-between text-slate-800">
 
-    <header class="bg-emerald-700 text-white shadow-md p-4 text-center">
-        <h1 class="text-xl font-bold tracking-wide uppercase">Grupo Scout - Autorizaciones Digitales</h1>
-        <p class="text-xs text-emerald-200 mt-1">Trámite Oficial Mediante Acuerdo Marco Válido Legalmente</p>
+    <header class="bg-emerald-700 text-white shadow-md p-4 flex flex-col items-center justify-center space-y-2">
+        <img id="web-logo" src="" alt="Logo Scout" class="hidden w-[50px] h-[50px] object-contain bg-white p-1 rounded-full shadow-inner">
+        <div class="text-center">
+            <h1 id="web-titulo" class="text-base font-bold tracking-wide uppercase">Cargando Sistema...</h1>
+            <p id="web-subtitulo" class="text-3xs text-emerald-100 mt-0.5 font-medium tracking-wider">Sincronizando parámetros institucionales...</p>
+        </div>
     </header>
 
-    <main class="flex-grow p-4 md:p-8 max-w-xl mx-auto w-full">
+    <main class="flex-grow p-4 max-w-xl mx-auto w-full">
 
-        <!-- Pantalla de Carga Inicial -->
-        <div id="pantalla-carga" class="bg-white rounded-lg shadow-md p-8 text-center space-y-4">
-            <div class="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full spinner mx-auto"></div>
-            <p class="text-sm text-gray-600 font-medium">Sincronizando con el Panel de Control Scout...</p>
+        <div id="pantalla-carga" class="bg-white rounded-xl shadow-sm border p-8 text-center space-y-3 mt-4">
+            <div class="w-10 h-10 border-4 border-emerald-100 border-t-emerald-600 rounded-full spinner mx-auto"></div>
+            <p class="text-xs text-slate-500 font-medium">Estableciendo túnel seguro con la base de datos scout...</p>
         </div>
 
-        <!-- Pantalla Principal del Formulario -->
-        <div id="pantalla-formulario" class="hidden space-y-5">
+        <div id="pantalla-formulario" class="hidden space-y-4">
             
-            <!-- Selector de Rama -->
-            <div class="bg-white rounded-lg shadow-md p-4 space-y-2">
-                <label class="block text-xs font-bold text-gray-600 uppercase">Seleccioná la Rama de tu hijo/a:</label>
-                <select id="selector-rama" class="w-full p-2.5 border-2 border-emerald-600 rounded-md bg-white focus:outline-none text-gray-800 font-medium text-sm">
-                    <option value="" disabled selected>-- Elegir Sección --</option>
-                    <option value="Lobatos">Lobatos (varones de 6 a 11 años)</option>
-		    <option value="Chispas">Chispas (Nenas de 6 a 10 años)</option>
-                    <option value="Scout">Tropa y Comunidad Scout</option>
-                    <option value="Raiders">Raiders</option>
-                    <option value="Rovers">Rovers</option>
+            <div class="bg-white rounded-xl shadow-sm border p-4 space-y-1.5">
+                <label class="block text-3xs font-bold text-slate-500 uppercase tracking-wider">1. Seleccioná la Rama de tu hijo/a:</label>
+                <select id="selector-rama" class="w-full p-2.5 border border-slate-300 rounded-lg bg-white focus:outline-none focus:border-emerald-600 text-sm font-medium">
+                    <option value="" disabled selected>-- Hacer clic para desplegar las ramas --</option>
+                    <option value="Manada">Manada (Lobatos y Chispitas)</option>
+                    <option value="Unidad">Unidad Scout</option>
+                    <option value="Caminantes">Comunidad de Caminantes</option>
+                    <option value="Rovers">Comunidad Rover</option>
                 </select>
             </div>
 
-            <!-- Tarjeta de Información de la Actividad -->
-            <div id="tarjeta-actividad" class="hidden bg-white border-l-4 border-amber-500 rounded-r-lg shadow p-4">
-                <span class="bg-amber-100 text-amber-800 text-2xs font-bold px-2 py-0.5 rounded uppercase tracking-wider">Actividad Convocada</span>
-                <h2 id="actividad-evento" class="text-base font-bold text-gray-800 mt-1.5">---</h2>
-                <div class="mt-2 text-xs text-gray-600 space-y-1">
-                    <p><strong>📍 Destino:</strong> <span id="actividad-destino">---</span></p>
-                    <p><strong>📅 Fecha:</strong> <span id="actividad-fecha">---</span></p>
-                    <p id="bloque-detalles"><strong>📝 Detalles:</strong> <span id="actividad-detalles">---</span></p>
+            <div id="tarjeta-actividad" class="hidden bg-amber-50/70 border-l-4 border-amber-500 rounded-r-xl shadow-sm p-4 text-slate-700 space-y-2">
+                <div class="mb-2">
+                    <span class="bg-amber-600 text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-widest">Convocatoria Oficial</span>
+                </div>
+                
+                <div class="text-xs space-y-1.5 font-medium">
+                    <p><strong>🎯 Evento:</strong> <span id="act-tipo-evento" class="uppercase underline font-bold">---</span></p>
+                    <p><strong>📌 Lugar:</strong> <span id="act-lugar" class="text-slate-900">---</span></p>
+                    <p><strong>📍 Dirección:</strong> <span id="act-direccion" class="text-slate-900">---</span> (<span id="act-localidad" class="text-slate-900">---</span>)</p>
+                    <p><strong>📅 Inicio:</strong> <span id="act-fecha-inicio">---</span> a las <span id="act-hora-inicio">---</span></p>
+                    <p><strong>⏰ Fin:</strong> <span id="act-fecha-fin">---</span> a las <span id="act-hora-fin">---</span></p>
+                </div>
+
+                <div id="bloque-detalles" class="mt-2.5 pt-2.5 border-t border-amber-200 text-3xs text-slate-500">
+                    <strong>📝 Notas de la Jefatura:</strong> <span id="act-detalles">---</span>
                 </div>
             </div>
 
-            <!-- Cartel de Rama sin Actividad -->
-            <div id="tarjeta-sin-actividad" class="hidden bg-white border-l-4 border-rose-500 rounded-r-lg shadow p-5 text-center">
-                <p class="text-sm font-bold text-rose-800">No hay ninguna actividad activa para esta sección en este momento.</p>
-                <p class="text-xs text-gray-500 mt-1">Si considerás que es un error, por favor comunicate con tus jefes de rama.</p>
+            <div id="tarjeta-sin-actividad" class="hidden bg-white border border-rose-200 rounded-xl p-6 text-center shadow-sm">
+                <p class="text-xs font-bold text-rose-700">No hay eventos activos programados para esta rama en este momento.</p>
+                <p class="text-3xs text-slate-400 mt-1">Si la información es incorrecta, consultá con los dirigentes a cargo.</p>
             </div>
 
-            <!-- Formulario de Declaración Jurada -->
-            <form id="form-firmar" class="hidden bg-white rounded-lg shadow-md p-5 space-y-4">
-                <h3 class="text-xs font-bold text-gray-500 border-b pb-2 uppercase tracking-wide text-center">Datos del Adulto Responsable y del Menor</h3>
+            <div id="bloque-dni" class="hidden bg-white rounded-xl shadow-sm border p-4 space-y-2">
+                <label class="block text-3xs font-bold text-slate-500 uppercase tracking-wider">2. DNI Autorizado del Adulto Responsable</label>
+                <div class="flex space-x-2">
+                    <input type="number" id="input-dni" class="flex-grow p-2 border border-slate-300 rounded-lg text-sm focus:outline-none" placeholder="Ingresar número sin puntos">
+                    <button type="button" id="btn-validar-dni" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-slate-700">Verificar</button>
+                </div>
+                <p id="error-dni" class="hidden text-rose-600 text-3xs font-bold">⚠️ El DNI ingresado no coincide con nuestros registros de afiliados autorizados. Consultá a la jefatura.</p>
+            </div>
+
+            <form id="form-firmar" class="hidden bg-white rounded-xl shadow-sm border p-4 space-y-3.5">
+                <h3 class="text-3xs font-bold text-slate-400 border-b pb-1.5 uppercase tracking-widest text-center">3. Declaración Jurada Oficial por Adhesión</h3>
 
                 <div class="space-y-1">
-                    <label class="block text-2xs font-bold text-gray-600 uppercase">Nombre Completo del Adulto (Tutor)</label>
-                    <input type="text" id="input-nombre-adulto" required class="w-full p-2 border rounded-md text-sm text-gray-800 focus:outline-none focus:border-emerald-500" placeholder="Ej. Juan Pérez">
+                    <label class="block text-[10px] font-bold text-slate-600 uppercase">Nombre Completo del Adulto Firmante</label>
+                    <input type="text" id="input-nombre-adulto" required class="w-full p-2 border border-slate-200 rounded-lg text-xs">
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-3">
                     <div class="space-y-1">
-                        <label class="block text-2xs font-bold text-gray-600 uppercase">DNI del Adulto</label>
-                        <input type="number" id="input-dni-adulto" required class="w-full p-2 border rounded-md text-sm text-gray-800 focus:outline-none focus:border-emerald-500" placeholder="Sin puntos">
-                        <!-- Alerta de DNI inválido -->
-                        <p id="alerta-dni" class="hidden text-rose-600 text-3xs font-bold mt-1">⚠️ El DNI ingresado no figura autorizado en el Poder Anual de Abril.</p>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">Vínculo con el Scout</label>
+                        <select id="selector-vinculo" required class="w-full p-2 border border-slate-200 rounded-lg bg-white text-xs">
+                            <option value="Padre">Padre</option>
+                            <option value="Madre">Madre</option>
+                            <option value="Tutor Legal">Tutor Legal</option>
+                            <option value="Abuelo/a">Abuelo/a / Familiar a Cargo</option>
+                        </select>
                     </div>
                     <div class="space-y-1">
-                        <label class="block text-2xs font-bold text-gray-600 uppercase">Celular de Contacto</label>
-                        <input type="tel" id="input-tel-adulto" required class="w-full p-2 border rounded-md text-sm text-gray-800 focus:outline-none focus:border-emerald-500" placeholder="Con código de área">
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">Celular de Emergencia</label>
+                        <input type="tel" id="input-celular" required class="w-full p-2 border border-slate-200 rounded-lg text-xs" placeholder="Con código de área">
                     </div>
                 </div>
 
-                <!-- CAMPO NUEVO: CORREO ELECTRÓNICO DEL PADRE -->
                 <div class="space-y-1">
-                    <label class="block text-2xs font-bold text-gray-600 uppercase">Correo Electrónico del Adulto</label>
-                    <input type="email" id="input-email-adulto" required class="w-full p-2 border rounded-md text-sm text-gray-800 focus:outline-none focus:border-emerald-500" placeholder="tumail@gmail.com">
-                    <p class="text-3xs text-gray-400">A esta casilla se le enviará de inmediato el tiquet digital de respaldo legal.</p>
+                    <label class="block text-[10px] font-bold text-slate-600 uppercase">Tu Correo Electrónico (Para recibir la copia física de respaldo)</label>
+                    <input type="email" id="input-email" required class="w-full p-2 border border-slate-200 rounded-lg text-xs" placeholder="ejemplo@gmail.com">
                 </div>
 
-                <div class="space-y-1 border-t pt-3">
-                    <label class="block text-2xs font-bold text-gray-600 uppercase">Nombre Completo del Scout (Menor)</label>
-                    <input type="text" id="input-nombre-scout" required class="w-full p-2 border rounded-md text-sm text-gray-800 focus:outline-none focus:border-emerald-500" placeholder="Nombre de tu hijo/a">
+                <div class="space-y-1 bg-emerald-50/50 p-2.5 border border-emerald-100 rounded-lg">
+                    <label class="block text-[10px] font-bold text-emerald-800 uppercase">Seleccione el Menor a Autorizar</label>
+                    <select id="selector-menor" required class="w-full p-2 border border-emerald-300 rounded-lg bg-white text-xs font-semibold text-slate-700">
+                    </select>
                 </div>
 
-                <div class="bg-gray-50 p-3 border rounded-md flex items-start space-x-2.5">
-                    <input type="checkbox" id="check-legal" required class="w-4 h-4 mt-0.5 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500 cursor-pointer">
-                    <label for="check-legal" class="text-3xs text-gray-600 leading-tight cursor-pointer select-none">
-                        Haciendo clic aquí, <strong>AUTORIZO</strong> la participación de mi hijo/a en la actividad descrita. Manifiesto que esta conformidad digital se realiza bajo los términos de la <strong>Autorización firmada en la sede del Grupo Scout el dia de la inscripcion del menor</strong> que firmé físicamente al inicio del ciclo, asumiendo plena validez jurídica (Art. 286 y 984 CCyCN).
+                <div class="space-y-1">
+                    <label class="block text-[10px] font-bold text-slate-600 uppercase">Observaciones Médicas, Dietas o Medicación</label>
+                    <textarea id="input-observaciones" rows="2" class="w-full p-2 border border-slate-200 rounded-lg text-xs" placeholder="Indicar régimen, dosis y medicamento. Si no requiere, dejar vacío o poner 'Ninguna'."></textarea>
+                </div>
+
+                <div class="bg-slate-50 p-3 border rounded-lg flex items-start space-x-2.5">
+                    <input type="checkbox" id="check-legal" required class="w-4 h-4 mt-0.5 text-emerald-600 rounded cursor-pointer">
+                    <label class="block text-[10px] text-slate-500 leading-tight cursor-pointer select-none" for="check-legal" id="label-legal">
                     </label>
                 </div>
 
-                <button type="submit" id="btn-enviar" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded shadow text-xs uppercase tracking-wider transition duration-150">
+                <button type="submit" id="btn-enviar" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow text-xs uppercase tracking-wider transition">
                     Firmar y Enviar Autorización
                 </button>
             </form>
         </div>
 
-        <!-- Pantalla de Éxito Definitiva -->
-        <div id="pantalla-exito" class="hidden bg-white rounded-lg shadow-md p-6 text-center space-y-4">
-            <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">✓</div>
-            <h3 class="text-lg font-bold text-gray-800">¡Autorización Registrada!</h3>
-            <p class="text-xs text-gray-600">Se han despachado los comprobantes digitales de respaldo por correo electrónico.</p>
+        <div id="pantalla-exito" class="hidden bg-white rounded-xl shadow-sm border p-6 text-center space-y-4 mt-4">
+            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-xl font-bold">✓</div>
+            <h3 class="text-base font-bold text-slate-800">¡Conformidad Registrada con Éxito!</h3>
+            <p class="text-xs text-slate-500">Los correos institucionales de respaldo legal y operativo han sido distribuidos a las casillas de control correspondientes.</p>
             
-            <div class="bg-gray-50 border p-3.5 rounded-md text-left text-3xs font-mono text-gray-700 space-y-1">
-                <p class="font-bold border-b pb-1 text-gray-500 uppercase tracking-wider">Metadatos de Evidencia Legal:</p>
-                <p><strong>Evento:</strong> Consentimiento por Adhesión</p>
+            <div class="bg-slate-50 border p-3 rounded-lg text-left text-[10px] font-mono text-slate-600 space-y-1">
+                <p class="font-bold border-b pb-1 text-slate-400 uppercase tracking-wider">Evidencia de Firma Electrónica:</p>
                 <p><strong>Fecha/Hora:</strong> <span id="log-fecha">---</span></p>
-                <p><strong>IP Origen:</strong> <span id="log-ip">---</span></p>
+                <p><strong>IP Registrada:</strong> <span id="log-ip">---</span></p>
                 <p><strong>ID Transacción:</strong> <span id="log-id" class="text-emerald-600 font-bold">---</span></p>
             </div>
-            
-            <p class="text-3xs text-amber-700 font-medium bg-amber-50 p-2 rounded border border-amber-200">
-                Aviso: Se envió una copia de este registro al email de archivo del Grupo Scout y otra a la dirección del tutor de manera simultánea.
-            </p>
         </div>
 
     </main>
 
-    <footer class="bg-gray-800 text-gray-400 text-center p-3 text-2xs border-t">
-        Grupo Scout © 2026 — Plataforma Interna Segura de Gestión
+    <footer id="web-pie" class="bg-slate-800 text-slate-400 text-center p-3 text-3xs border-t border-slate-700 tracking-wide">
+        Plataforma Abierta Scout — Licencia Creative Commons CC-BY-SA
     </footer>
 
     <script>
-        // CONFIGURACIÓN CENTRAL: REEMPLAZÁ ESTE TEXTO CON TU ENLACE DE APPS SCRIPT REAL
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz-iNVrTQuvIy_wvqOnvYgMscGTRJNk72qxFf0V_wXlPe7Oe3UfTYWaUkqqniWXXp_f/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPhdb0iYIVYSDL5JtURyO0cxDYxKFxI8e6dAq-XfgwWaY92uZ9gs692JGy-qSEsQQA/exec";
 
         let baseActividades = {};
-        let listaBlancaDNIs = [];
-        let ipUsuario = "0.0.0.0";
+        let ipUsuario = "127.0.0.1";
+
+        function extraerFechaHigiene(str) {
+            if (!str) return "---";
+            const s = str.toString();
+            if (s.includes(' ') && s.length > 15) {
+                const d = new Date(s);
+                if (!isNaN(d.getTime())) {
+                    return d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                }
+            }
+            return s.split(' ')[0] || "---";
+        }
+
+        function extraerHoraHigiene(str) {
+            if (!str) return "---";
+            const s = str.toString().trim();
+            const matchTime = s.match(/(\d{2}):(\d{2})/);
+            if (matchTime) {
+                return matchTime[0] + "hs";
+            }
+            return s.toLowerCase().includes('hs') ? s : s + 'hs';
+        }
 
         window.addEventListener('DOMContentLoaded', async () => {
             try {
-                // 1. Capturar la IP pública de evidencia
                 const resIp = await fetch('https://api.ipify.org?format=json').catch(() => ({json: () => ({ip: "127.0.0.1"})}));
                 const dataIp = await resIp.json();
                 ipUsuario = dataIp.ip;
 
-                // 2. Traer base de datos completa de Google (Actividades + Lista Blanca)
-                // Le agregamos un número único al final de la URL (la hora en milisegundos) 
-		// para que Google se vea obligado a leer la planilla real en vivo.
-		const urlEnVivo = WEB_APP_URL + (WEB_APP_URL.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
-		const response = await fetch(urlEnVivo);
+                const urlEnVivo = WEB_APP_URL + (WEB_APP_URL.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+                const response = await fetch(urlEnVivo);
                 const resultado = await response.json();
 
                 if (resultado.status === "OK") {
-                    baseActividades = resultado.actividades;
-                    listaBlancaDNIs = resultado.listaBlanca; // Almacenamos los DNIs autorizados
+                    document.getElementById('web-titulo').innerText = resultado.textos.titulo;
+                    document.getElementById('web-subtitulo').innerText = resultado.textos.subtitulo;
+                    document.getElementById('label-legal').innerHTML = resultado.textos.legal;
+                    document.getElementById('web-pie').innerText = resultado.textos.pie;
                     
+                    if (resultado.textos.logo.trim() !== "") {
+                        const img = document.getElementById('web-logo');
+                        img.src = resultado.textos.logo;
+                        img.classList.remove('hidden');
+                    }
+
+                    baseActividades = resultado.actividades;
                     document.getElementById('pantalla-carga').classList.add('hidden');
                     document.getElementById('pantalla-formulario').classList.remove('hidden');
                 } else {
-                    alert("Error en la base de datos de Google: " + resultado.message);
+                    alert("Error detectado en la API del Sheets: " + resultado.message);
                 }
             } catch (error) {
-                alert("Error crítico de conexión. Verificá que la URL sea correcta y esté desplegada.");
-            }
-        });
-
-        // VALIDACIÓN DE DNI EN TIEMPO REAL
-        document.getElementById('input-dni-adulto').addEventListener('input', function(e) {
-            const dniIngresado = e.target.value.trim();
-            const btnEnviar = document.getElementById('btn-enviar');
-            const alertaDni = document.getElementById('alerta-dni');
-
-            if(dniIngresado === "") {
-                alertaDni.classList.add('hidden');
-                btnEnviar.disabled = false;
-                return;
-            }
-
-            // Validar si el DNI ingresado existe en la lista blanca descargada del Sheets
-            if (listaBlancaDNIs.includes(dniIngresado)) {
-                alertaDni.classList.add('hidden');
-                btnEnviar.disabled = false;
-                btnEnviar.classList.replace('bg-gray-400', 'bg-emerald-600');
-            } else {
-                alertaDni.classList.remove('hidden');
-                btnEnviar.disabled = true;
-                btnEnviar.classList.replace('bg-emerald-600', 'bg-gray-400');
+                alert("Error crítico de vinculación. Revisar permisos de despliegue o URL del script.");
             }
         });
 
         document.getElementById('selector-rama').addEventListener('change', (e) => {
-            const ramaSeleccionada = e.target.value;
-            const actividad = baseActividades[ramaSeleccionada];
-
-            const tarjetaActividad = document.getElementById('tarjeta-actividad');
-            const tarjetaSinActividad = document.getElementById('tarjeta-sin-actividad');
-            const formFirmar = document.getElementById('form-firmar');
+            const rama = e.target.value;
+            const actividad = baseActividades[rama];
+            
+            document.getElementById('form-firmar').classList.add('hidden');
+            document.getElementById('bloque-dni').classList.add('hidden');
+            document.getElementById('error-dni').classList.add('hidden');
 
             if (actividad) {
-                document.getElementById('actividad-evento').innerText = actividad.evento;
-                document.getElementById('actividad-destino').innerText = actividad.destino;
-                document.getElementById('actividad-fecha').innerText = actividad.fecha;
+                document.getElementById('act-tipo-evento').innerText = actividad.tipoEvento;
+                document.getElementById('act-lugar').innerText = actividad.lugar;
+                document.getElementById('act-direccion').innerText = actividad.direccion;
+                document.getElementById('act-localidad').innerText = actividad.localidad;
                 
-                if(actividad.detalles) {
+                document.getElementById('act-fecha-inicio').innerText = extraerFechaHigiene(actividad.fechaInicio);
+                document.getElementById('act-fecha-fin').innerText = extraerFechaHigiene(actividad.fechaFin);
+                document.getElementById('act-hora-inicio').innerText = extraerHoraHigiene(actividad.horaInicio);
+                document.getElementById('act-hora-fin').innerText = extraerHoraHigiene(actividad.horaFin);
+                
+                if (actividad.detalles) {
                     document.getElementById('bloque-detalles').style.display = 'block';
-                    document.getElementById('actividad-detalles').innerText = actividad.detalles;
+                    document.getElementById('act-detalles').innerText = actividad.detalles;
                 } else {
                     document.getElementById('bloque-detalles').style.display = 'none';
                 }
 
-                tarjetaActividad.classList.remove('hidden');
-                tarjetaSinActividad.classList.add('hidden');
-                formFirmar.classList.remove('hidden');
+                document.getElementById('tarjeta-actividad').classList.remove('hidden');
+                document.getElementById('tarjeta-sin-actividad').classList.add('hidden');
+                document.getElementById('bloque-dni').classList.remove('hidden');
             } else {
-                tarjetaActividad.classList.add('hidden');
-                tarjetaSinActividad.classList.remove('hidden');
-                formFirmar.classList.add('hidden');
+                document.getElementById('tarjeta-actividad').classList.add('hidden');
+                document.getElementById('tarjeta-sin-actividad').classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('btn-validar-dni').addEventListener('click', async () => {
+            const dniVal = document.getElementById('input-dni').value.trim();
+            const errorDni = document.getElementById('error-dni');
+            const formFirmar = document.getElementById('form-firmar');
+            const selectMenor = document.getElementById('selector-menor');
+
+            if (!dniVal) return;
+            errorDni.classList.add('hidden');
+            formFirmar.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${WEB_APP_URL}?dni=${dniVal}&t=${new Date().getTime()}`);
+                const data = await response.json();
+
+                if (data.status === "DNI_VALIDO") {
+                    document.getElementById('input-nombre-adulto').value = data.nombreAdulto;
+                    document.getElementById('selector-vinculo').value = data.vinculo || "Padre";
+                    
+                    selectMenor.innerHTML = "";
+                    
+                    let optDefault = document.createElement('option');
+                    optDefault.value = "";
+                    optDefault.innerText = "-- Seleccionar --";
+                    optDefault.disabled = true;
+                    optDefault.selected = true;
+                    selectMenor.appendChild(optDefault);
+
+                    data.menores.forEach(menor => {
+                        let opt = document.createElement('option');
+                        opt.value = menor;
+                        opt.innerText = menor;
+                        selectMenor.appendChild(opt);
+                    });
+
+                    formFirmar.classList.remove('hidden');
+                } else {
+                    errorDni.classList.remove('hidden');
+                }
+            } catch (e) {
+                alert("Error al interconectar con el Padrón de Beneficiarios.");
             }
         });
 
         document.getElementById('form-firmar').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            const selectMenor = document.getElementById('selector-menor');
+            if (!selectMenor.value) {
+                alert("Por favor, seleccione el menor a autorizar.");
+                return;
+            }
 
-            const btnEnviar = document.getElementById('btn-enviar');
-            btnEnviar.disabled = true;
-            btnEnviar.innerText = "Registrando Conformidad Legales...";
+            const btn = document.getElementById('btn-enviar');
+            btn.disabled = true;
+            btn.innerText = "Registrando Conformidad Legítima e IP...";
 
             const payload = {
                 rama: document.getElementById('selector-rama').value,
                 nombreAdulto: document.getElementById('input-nombre-adulto').value,
-                dniAdulto: document.getElementById('input-dni-adulto').value,
-                emailAdulto: document.getElementById('input-email-adulto').value, // Nuevo dato enviado
-                celular: document.getElementById('input-tel-adulto').value,
-                nombreScout: document.getElementById('input-nombre-scout').value,
+                dniAdulto: document.getElementById('input-dni').value,
+                vinculoTutor: document.getElementById('selector-vinculo').value,
+                celular: document.getElementById('input-celular').value,
+                emailAdulto: document.getElementById('input-email').value,
+                nombreScout: selectMenor.value,
+                observaciones: document.getElementById('input-observaciones').value,
                 ipControl: ipUsuario
             };
 
             try {
-                // Enviamos los datos reales por POST
                 await fetch(WEB_APP_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -247,7 +316,6 @@
                     body: JSON.stringify(payload)
                 });
 
-                // Render de pantalla de éxito con datos de auditoría
                 const ahora = new Date();
                 document.getElementById('log-fecha').innerText = ahora.toLocaleString('es-AR');
                 document.getElementById('log-ip').innerText = ipUsuario;
@@ -255,11 +323,10 @@
 
                 document.getElementById('pantalla-formulario').classList.add('hidden');
                 document.getElementById('pantalla-exito').classList.remove('hidden');
-
-            } catch (error) {
-                alert("Error de envío: " + error.toString());
-                btnEnviar.disabled = false;
-                btnEnviar.innerText = "Firmar y Enviar Autorización";
+            } catch (err) {
+                alert("Falla crítica en el túnel de guardado: " + err.toString());
+                btn.disabled = false;
+                btn.innerText = "Firmar y Enviar Autorización";
             }
         });
     </script>
